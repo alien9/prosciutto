@@ -78,6 +78,7 @@ def send():
     cur.close()
     db.close()
     msg = Message(app.config.get('SUBJECT'), sender='contato@dobralab.com.br', bcc=['barufi@gmail.com'], recipients=[data[1]])
+    #msg = Message(app.config.get('SUBJECT'), sender='contato@dobralab.com.br', bcc=['barufi@gmail.com'], recipients=['leandro@dobralab.com.br'])
     msg.html = t
     mail.send(msg)
     return json.dumps({"status":"OK"})
