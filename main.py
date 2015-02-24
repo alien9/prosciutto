@@ -68,15 +68,16 @@ def send():
     cur.execute("select name,email,id from prospect where sent=0 limit 1")
     data=cur.fetchone()
     if data is None:
+        cur.close()
+        db.close()
         return "Nada mais a enviar"
     token=hashlib.sha224(data[1].encode('utf-8')).hexdigest()
     t=render_template('mail.html', link="%s?i=%s"%(app.config.get('URL'),token,), image="%simage?i=%s"%(app.config.get('URL'),token,))
-
     cur.execute("update prospect set sent=1,token=? where id=?", (token,data[2],))
     db.commit()
     cur.close()
     db.close()
-    msg = Message(app.config.get('SUBJECT'), sender='contato@dobralab.com.br', recipients=['barufi@gmail.com','leandro@dobralab.com.br'])
+    msg = Message(app.config.get('SUBJECT'), sender='contato@dobralab.com.br', bcc=['barufi@gmail.com'], recipients=[data[1]])
     msg.html = t
     mail.send(msg)
     return json.dumps({"status":"OK"})
